@@ -575,7 +575,7 @@ class Bucket(_PropertyMixin):
             query_params=query_params,
             _target_object=None)
 
-    def delete_blob(self, blob_name, client=None):
+    def delete_blob(self, blob_name, client=None, generation=None):
         """Deletes a blob from the current bucket.
 
         If the blob isn't found (backend 404), raises a
@@ -597,6 +597,11 @@ class Bucket(_PropertyMixin):
         :param client: Optional. The client to use.  If not passed, falls back
                        to the ``client`` stored on the current bucket.
 
+        :type generation: :class:`~google.cloud.storage.client.Client` or
+                          ``NoneType``
+        :param generation: Optional. The generation of the blob to delete. If
+                           not passed, deletes the current version.
+
         :raises: :class:`google.cloud.exceptions.NotFound` (to suppress
                  the exception, call ``delete_blobs``, passing a no-op
                  ``on_error`` callback, e.g.:
@@ -616,11 +621,18 @@ class Bucket(_PropertyMixin):
         # We intentionally pass `_target_object=None` since a DELETE
         # request has no response value (whether in a standard request or
         # in a batch request).
-        client._connection.api_request(
-            method='DELETE',
-            path=blob_path,
-            query_params=query_params,
-            _target_object=None)
+        if not generation:
+            client._connection.api_request(
+                method='DELETE',
+                path=blob_path,
+                query_params=query_params,
+                _target_object=None)
+        else:
+            client._connection.api_request(
+                method='DELETE',
+                path=blob_path + '?generation={}'.format(generation),
+                query_params=query_params,
+                _target_object=None)
 
     def delete_blobs(self, blobs, on_error=None, client=None):
         """Deletes a list of blobs from the current bucket.

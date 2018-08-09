@@ -388,7 +388,7 @@ class Blob(_PropertyMixin):
         except NotFound:
             return False
 
-    def delete(self, client=None):
+    def delete(self, client=None, generation=None):
         """Deletes a blob from Cloud Storage.
 
         If :attr:`user_project` is set on the bucket, bills the API request
@@ -405,7 +405,7 @@ class Blob(_PropertyMixin):
                  (propagated from
                  :meth:`google.cloud.storage.bucket.Bucket.delete_blob`).
         """
-        return self.bucket.delete_blob(self.name, client=client)
+        return self.bucket.delete_blob(self.name, client=client, generation=generation)
 
     def _get_transport(self, client):
         """Return the client's transport.
