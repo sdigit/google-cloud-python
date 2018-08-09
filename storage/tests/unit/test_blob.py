@@ -543,6 +543,18 @@ class Test_Blob(unittest.TestCase):
         self.assertFalse(blob.exists())
         self.assertEqual(bucket._deleted, [(BLOB_NAME, None)])
 
+    def test_delete_with_generation(self):
+        BLOB_NAME = 'blob-name'
+        not_found_response = ({'status': http_client.NOT_FOUND}, b'')
+        connection = _Connection(not_found_response)
+        client = _Client(connection)
+        bucket = _Bucket(client)
+        blob = self._make_one(BLOB_NAME, bucket=bucket)
+        bucket._blobs[BLOB_NAME] = 1
+        blob.delete(generation=blob.generation)
+        self.assertFalse(blob.exists())
+        self.assertEqual(bucket._deleted, [(BLOB_NAME, None)])
+
     def test__get_transport(self):
         client = mock.Mock(spec=[u'_credentials', '_http'])
         client._http = mock.sentinel.transport
@@ -3027,7 +3039,7 @@ class _Bucket(object):
         self.path = '/b/' + name
         self.user_project = user_project
 
-    def delete_blob(self, blob_name, client=None):
+    def delete_blob(self, blob_name, client=None, generation=None):
         del self._blobs[blob_name]
         self._deleted.append((blob_name, client))
 

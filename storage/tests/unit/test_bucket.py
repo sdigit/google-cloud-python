@@ -874,7 +874,7 @@ class Test_Bucket(unittest.TestCase):
                 self.path = '/b/%s/o/%s' % (bucket_name, name)
                 self._deleted = []
 
-            def delete(self, client=None):
+            def delete(self, client=None, generation=None):
                 self._deleted.append(client)
 
         blob = _Blob(BLOB_NAME, BUCKET_NAME)
