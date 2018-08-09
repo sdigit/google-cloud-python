@@ -597,8 +597,7 @@ class Bucket(_PropertyMixin):
         :param client: Optional. The client to use.  If not passed, falls back
                        to the ``client`` stored on the current bucket.
 
-        :type generation: :class:`~google.cloud.storage.client.Client` or
-                          ``NoneType``
+        :type generation: int or ``NoneType``
         :param generation: Optional. The generation of the blob to delete. If
                            not passed, deletes the current version.
 
